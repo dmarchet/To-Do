@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { trigger,style,transition,animate,keyframes;query,stagger } from '@angular/animations';
+import { DataService } from '../data.service';
 
 @Component({
   selector: 'app-home',
@@ -29,14 +30,16 @@ import { trigger,style,transition,animate,keyframes;query,stagger } from '@angul
 })
 export class HomeComponent implements OnInit {
 
-  itemCount: number = 4;
+  // itemCount: number = 4;
   btnText: string = 'Add an Item';
   todoText: string= 'My first thing to do';
-  todos = ['Buy Groceries', 'Walk the dogs', 'Make dinner'];
+  todos = [];
 
-  constructor() { }
+  constructor(private _data: DataService) { }
 
   ngOnInit() {
+    this._data.todo.subscribe(res => this.todos = res);
+    this._data.changeTodo(this.todos);
     this.itemCount = this.todos.length;
   }
 
@@ -44,10 +47,12 @@ export class HomeComponent implements OnInit {
     this.todos.push(this.todoText);
     this.todoText = '';
     this.itemCount = this.todos.length;
+    this._data.changeTodo(this.todos);
   }
 
   removeItem(i) {
     this.todos.splice(i, 1);
+    this._data.changeTodo(this.todos);
     this.itemCount = this.todos.length;
   }
 
